@@ -22,9 +22,9 @@ def prepare(constants):
 
     while True:
         event, values = window.Read()
-        if event is None or event == "Exit" or event == "Cancel":
+        if not event or event == "Exit" or event == "Cancel":
             window.Close()
-            break
+            return None
         if event == "Ok":
             invalid = {}
             for key, value in values.items():

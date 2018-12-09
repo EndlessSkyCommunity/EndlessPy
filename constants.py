@@ -4,6 +4,7 @@ import logging
 from ruamel.yaml import YAML
 import appdirs
 import os
+from installations import Installation
 
 log = logging.getLogger("constants.py")
 
@@ -13,10 +14,11 @@ class Constants:
         os.makedirs(self.config_dir, exist_ok=True)
 
         self.yaml = YAML()
+        self.yaml.register_class(Installation)
         self.yaml.default_flow_style = False
 
         self.installations_file = os.path.join(self.config_dir, "installations.yaml")
-        self.installations = self.read_installations()
+        self.installations = self._read_installations()
 
         # Default Settings
         self.es_git = "https://github.com/endless-sky/endless-sky.git"
@@ -49,17 +51,17 @@ class Constants:
         else:
             logging.error("Got unknown Operating System " + platform + "!")
 
-    def read_installations(self):
+    def _read_installations(self):
         if not os.path.exists(self.installations_file):
             return []
         else:
             with open(self.installations_file, "r") as f:
-                return self.yaml.load(f)
+                return self.yaml.load(f) or []
 
-    def save_installations(self):
+    def _save_installations(self):
         with open(self.installations_file, "w") as f:
             self.yaml.dump(self.installations, f)
 
     def add_installation(self, installation):
         self.installations.append(installation)
-        self.save_installations()
+        self._save_installations()

@@ -4,6 +4,7 @@ from install import nightly_steps, compile_steps_win
 import traceback
 import sys
 import utils
+from installations import Installation
 
 log = logging.getLogger("install.py")
 
@@ -24,7 +25,7 @@ class Installer:
             window.Close()
             return
 
-        constants.add_installation(settings)
+        constants.add_installation(Installation(**settings))
 
         window.Close()
         if self.finalize:
@@ -48,6 +49,8 @@ class InstallStep:
 
 def install_nightly(constants):
     settings = nightly_steps.prepare(constants)
+    if not settings: # Aborted
+        return
     settings["type"] = "nightly-%s-%s" % (constants.os, "git" if settings["git"] else "nogit")
     steps = [
         InstallStep("Setting up workspace", "1", nightly_steps.setup_workspace),
@@ -59,6 +62,8 @@ def install_nightly(constants):
 
 def compile_win(constants):
     settings = compile_steps_win.prepare(constants)
+    if not settings: # Aborted
+        return
     settings["type"] = "source-%s" % constants.os
     steps = [
         InstallStep("Cloning", "1", compile_steps_win.cloning),

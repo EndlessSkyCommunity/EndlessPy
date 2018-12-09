@@ -25,9 +25,9 @@ def prepare(constants):
 
     while True:
         event, values = window.Read()
-        if event is None or event == "Exit" or event == "Cancel":
+        if not event or event == "Exit" or event == "Cancel":
             window.Close()
-            break
+            return None
         if event == "Ok":
             invalid = {}
             for key, value in values.items():
@@ -45,8 +45,10 @@ def prepare(constants):
                     if p == "No":
                         window.Fill(values)
                         continue
+                    window.Close()
                     utils.empty_directory(values["installdir"])
-                window.Close()
+                else:
+                    window.Close()
                 return values
 
 def setup_workspace(constants, settings):
