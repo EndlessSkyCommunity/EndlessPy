@@ -1,0 +1,6 @@
+*__pychache__*
+build/
+dist/
+venv/
+.idea/
+__pycache__/
