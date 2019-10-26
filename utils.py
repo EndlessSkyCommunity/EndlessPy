@@ -1,12 +1,13 @@
-from dulwich import porcelain
-import requests
-import os
-import PySimpleGUI as sg
-from zipfile import ZipFile
 import logging
+import os
 import shutil
 import sys
 import traceback
+from zipfile import ZipFile
+
+import PySimpleGUI as sg
+import requests
+from dulwich import porcelain
 
 log = logging.getLogger("utils.py")
 
@@ -57,4 +58,4 @@ def empty_directory(dirpath):
 
 def exception_popup(exception):
     type_, value_, tb = sys.exc_info()
-    sg.PopupOK("An Error occured:\n" + "".join(traceback.format_exception(type_, value_, tb)))
+    sg.PopupOK("An Error occurred:\n" + "".join(traceback.format_exception(type_, value_, tb)))

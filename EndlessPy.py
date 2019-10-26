@@ -1,64 +1,36 @@
-import PySimpleGUI as sg
 import logging
 
-from install import install
-from constants import Constants
+import PySimpleGUI as sg
+
+import colors
 import utils
+from constants import Constants
+from install import install
 
 logging.basicConfig(level="INFO")
 log = logging.getLogger("EndlessPy.py")
 
-sg.SetOptions(button_color=("#dfdfdf", "#202020"),
+sg.SetOptions(button_color=(colors.TEXT, colors.BACKGROUND),
               border_width="1",
               progress_meter_color=("#9f9f9f", "#181818"),
               progress_meter_size=(15, 20),
               progress_meter_relief="groove",
-              background_color="#202020",
-              element_background_color="#202020",
-              text_element_background_color="#202020",
-              input_elements_background_color="#393939",
-              input_text_color="#bfbfbf",
-              element_text_color="#dfdfdf",
-              text_color="#dfdfdf")
+              background_color=colors.BACKGROUND,
+              element_background_color=colors.BACKGROUND,
+              text_element_background_color=colors.BACKGROUND,
+              input_elements_background_color=colors.BACKGROUND_LIGHT,
+              input_text_color=colors.TEXT_DARKER,
+              element_text_color=colors.TEXT,
+              text_color=colors.TEXT, )
 
 constants = Constants()
 
-
-def installations_table():
-    if not constants.installations:
-        return sg.Text("No Installations yet!")
-
-    headings = ["Name", "Directory", "Git", "Type"]
-    data = [
-        [
-            i.name,
-            i.installdir,
-            bool(i.es_git),
-            i.type,
-        ] for i in constants.installations]
-    return sg.Table(values=data, headings=headings, key="installations_table")
-
-
 layout = [
     [
+        sg.Button("Install Nightly"),
     ],
     [
-        sg.TabGroup([
-            [
-                sg.Tab("Installations", key="installations_tab", layout=
-                [
-                    [
-                        sg.Button("Launch Selected"),
-                        sg.Button("Remove Selected"),
-                        sg.Button("Install Nightly"),
-                        sg.Button("Install from Source"),
-                        sg.Button("Add Local Installation")
-                    ],
-                    [installations_table()]
-                ]),
-                sg.Tab("Plug-Ins", key="plugins_tab", layout=[]),
-            ]
-        ])
+        sg.Button("Install from Source")
     ]
 ]
 
@@ -71,11 +43,7 @@ while True:
     window.Hide()
 
     try:
-        if event == "Launch Selected":
-            if not values["installations_table"]: # Nothing selected
-                continue
-            constants.installations[values["installations_table"][0]].launch()
-        elif event == "Install Nightly":
+        if event == "Install Nightly":
             install.install_nightly(constants)
         elif event == "Install from Source":
             install.compile_win(constants)

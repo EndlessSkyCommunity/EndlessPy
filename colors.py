@@ -1,0 +1,4 @@
+TEXT = "#dfdfdf"
+TEXT_DARKER = "#bfbfbf"
+BACKGROUND = "#202020"
+BACKGROUND_LIGHT = "#393939"

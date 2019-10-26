@@ -1,10 +1,9 @@
-import PySimpleGUI as sg
 import logging
-from install import nightly_steps, compile_steps_win
-import traceback
-import sys
+
+import PySimpleGUI as sg
+
 import utils
-from installations import Installation
+from install import nightly_steps, compile_steps_win
 
 log = logging.getLogger("install.py")
 
@@ -25,8 +24,6 @@ class Installer:
             utils.exception_popup(e)
             window.Close()
             return
-
-        constants.add_installation(Installation(**settings))
 
         window.Close()
         if self.finalize:
@@ -50,7 +47,7 @@ class InstallStep:
 
 def install_nightly(constants):
     settings = nightly_steps.prepare(constants)
-    if not settings: # Aborted
+    if not settings:  # Aborted
         return
     settings["type"] = "nightly-%s-%s" % (constants.os, "git" if settings["git"] else "nogit")
     steps = [
@@ -64,7 +61,7 @@ def install_nightly(constants):
 
 def compile_win(constants):
     settings = compile_steps_win.prepare(constants)
-    if not settings: # Aborted
+    if not settings:  # Aborted
         return
     settings["type"] = "source-%s" % constants.os
     steps = [
