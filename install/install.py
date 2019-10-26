@@ -8,6 +8,7 @@ from installations import Installation
 
 log = logging.getLogger("install.py")
 
+
 class Installer:
     def __init__(self, steps, finalize_func=None):
         self.steps = steps
@@ -59,6 +60,7 @@ def install_nightly(constants):
         InstallStep("Downloading Nightly", "4", nightly_steps.download_nightly)
     ]
     Installer(steps).run(constants, settings)
+
 
 def compile_win(constants):
     settings = compile_steps_win.prepare(constants)

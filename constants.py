@@ -8,6 +8,7 @@ from installations import Installation
 
 log = logging.getLogger("constants.py")
 
+
 class Constants:
     def __init__(self):
         self.config_dir = appdirs.user_config_dir("EndlessPy", appauthor=False)
@@ -35,7 +36,6 @@ class Constants:
         self.linux_plugin_dir = "~/.local/share/endless-sky/plugins/"
         self.windows_plugin_dir = appdirs.user_config_dir("plugins", "endless-sky", roaming=True)
         self.osx_plugin_dir = "~/Library/ApplicationSupport/endless-sky/plugins"
-
 
         if platform.startswith("linux"): # On Python 3.2 and older, "linux" may be followed by a version number
             self.os = "linux"

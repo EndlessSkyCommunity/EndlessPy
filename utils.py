@@ -10,10 +10,12 @@ import traceback
 
 log = logging.getLogger("utils.py")
 
+
 def clone(repo_url, dir):
     repo = porcelain.clone(repo_url, dir)
     return repo
     # TODO: Progress Indicator?
+
 
 def download_file(url, path, size_estimate):
     log.info("Downloading file %s to %s" % (url, path))
@@ -31,6 +33,7 @@ def download_file(url, path, size_estimate):
                                     "Note: Total size is an estimate." if size_estimated else "")
             handle.write(data)
 
+
 def extract(archive, dir):
     log.info("Extracting Archive %s to %s" % (archive, dir))
     if archive.endswith(".zip"):
@@ -41,6 +44,7 @@ def extract(archive, dir):
     log.info("Removing archive")
     os.remove(archive)
 
+
 def empty_directory(dirpath):
     log.info("Emptying directory " + dirpath)
     for filename in os.listdir(dirpath):
@@ -49,6 +53,7 @@ def empty_directory(dirpath):
             shutil.rmtree(filepath)
         except OSError:
             os.remove(filepath)
+
 
 def exception_popup(exception):
     type_, value_, tb = sys.exc_info()

@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 import logging
 
-import installations
 from install import install
 from constants import Constants
 import utils
@@ -23,6 +22,7 @@ sg.SetOptions(button_color=("#dfdfdf", "#202020"),
               text_color="#dfdfdf")
 
 constants = Constants()
+
 
 def installations_table():
     if not constants.installations:
