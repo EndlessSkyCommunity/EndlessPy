@@ -1,4 +1,5 @@
 import logging
+from threading import Thread
 
 import PySimpleGUI as sg
 
@@ -37,9 +38,14 @@ class InstallStep:
         self.description = description
         self.desc_key = desc_key
 
-    def run(self, constants, settings, window):
+    def run(self, constants, settings, window: sg.Window):
         window.FindElement(self.desc_key).Update(value=u"\u27F3" + " " + self.description)
-        self.execute(constants, settings)
+        thread = Thread(target=self.execute, args=(constants, settings))
+        thread.start()
+        while thread.is_alive():
+            window.read(1)
+        thread.join()
+
         self._finalize(window)
 
     def _finalize(self, window):

@@ -6,16 +6,27 @@ import traceback
 from zipfile import ZipFile
 
 import PySimpleGUI as sg
+import git
 import requests
-from dulwich import porcelain
 
 log = logging.getLogger("utils.py")
 
 
-def clone(repo_url, dir):
-    repo = porcelain.clone(repo_url, dir)
+def clone(repo_url, dir, git_bin):
+    log.info("Cloning %s to %s" % (repo_url, dir))
+    git_bin = git_bin or r"C:\Users\Florian\Downloads\mingit-busybox\cmd\git"
+
+    def update(op_code, cur_count, max_count=None, message=""):
+        log.info("Cloning, op_code: %s, current: %s, max: %s, message: %s" % (op_code, cur_count, max_count, message))
+        sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
+
+    os.putenv("GIT_PYTHON_GIT_EXECUTABLE", git_bin)
+    g = git.Git(dir)
+    log.info(g.GIT_PYTHON_GIT_EXECUTABLE)
+    log.info(str(g.version_info))
+    log.info(str(g.environment()))
+    repo = git.Repo.clone_from(repo_url, dir, env={"GIT_PYTHON_GIT_EXECUTABLE": git_bin}, progress=update)
     return repo
-    # TODO: Progress Indicator?
 
 
 def download_file(url, path, size_estimate):
@@ -30,8 +41,8 @@ def download_file(url, path, size_estimate):
         done = 0
         for data in r.iter_content(1024):
             done += 1024
-            sg.OneLineProgressMeter("Downloading " + name, done, size, "downloadmeter",
-                                    "Note: Total size is an estimate." if size_estimated else "")
+            sg.OneLineProgressMeter("Downloading %s" % name, done, size, "downloadmeter",
+                                    "Note: Total size is an estimate." if size_estimated else "", orientation="h")
             handle.write(data)
 
 

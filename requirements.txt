@@ -1,5 +1,4 @@
 PySimpleGUI
-dulwich
+GitPython
 requests
-ruamel.yaml
 appdirs

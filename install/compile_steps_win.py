@@ -50,7 +50,7 @@ def prepare(constants):
 
 
 def cloning(constants, settings):
-    utils.clone(settings["es_git"], settings["installdir"])
+    utils.clone(settings["es_git"], settings["installdir"], None)
 
 
 def download_compiler(constants, settings):
