@@ -5,6 +5,7 @@ import PySimpleGUI as sg
 import utils
 from install import nightly_steps, compile_steps_win
 
+# TODO make dynamic
 log = logging.getLogger("install.py")
 
 

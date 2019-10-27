@@ -1,14 +1,15 @@
-import PySimpleGUI as sg
 import os
 import shutil
-import utils
-import requests
 import stat
+
+import PySimpleGUI as sg
+import requests
+
+import utils
 
 
 def prepare(constants):
     layout = [
-        [sg.Text("Name:"), sg.InputText(key="name")],
         [sg.Text("Select Install Directory")],
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
         [sg.Text("Using Git is recommended, but it may slow down the installation process.")],
@@ -51,6 +52,7 @@ def prepare(constants):
                     window.Close()
                 return values
 
+
 def setup_workspace(constants, settings):
     if constants.os == "osx":
         settings["resourcedir"] = os.path.join(settings["installdir"], "Resources")
@@ -79,11 +81,13 @@ def download_resources(constants, settings):
             shutil.move(os.path.join(temppath, file), os.path.join(settings["resourcedir"], file))
         shutil.rmtree(os.path.join(temppath))
 
+
 def download_libraries(constants, settings):
     archive = os.path.join(settings["libdir"], "libraries.zip")
     liburl = settings["win64_libs"] if constants.os == "win64" else settings["osx_libs"]
     utils.download_file(liburl, archive, 0)
     utils.extract(archive, settings["libdir"])
+
 
 def download_nightly(constants, settings):
     executable = os.path.join(settings["bindir"], "EndlessSky" + (".exe" if constants.os == "win64" else ""))
@@ -99,7 +103,7 @@ def download_nightly(constants, settings):
     utils.download_file(nightly_url, target, 0)
 
     if os == "osx" or True:
-        #util.extract(target, bindir)
+        # util.extract(target, bindir)
         st = os.stat(executable)
         os.chmod(executable, st.st_mode | stat.S_IEXEC)
         script = os.path.join(settings["installdir"], "EndlessSky.sh")

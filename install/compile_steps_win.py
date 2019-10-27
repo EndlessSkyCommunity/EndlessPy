@@ -1,13 +1,15 @@
-import PySimpleGUI as sg
-import utils
 import os
 import shutil
-from multiprocessing import cpu_count
 import subprocess
+from multiprocessing import cpu_count
+
+import PySimpleGUI as sg
+
+import utils
+
 
 def prepare(constants):
     layout = [
-        [sg.Text("Name:"), sg.InputText(key="name")],
         [sg.Text("Select Install Directory")],
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
         [sg.Text("Number of CPU cores to be used for compiling"),
@@ -46,13 +48,16 @@ def prepare(constants):
                 window.Close()
                 return values
 
+
 def cloning(constants, settings):
     utils.clone(settings["es_git"], settings["installdir"])
+
 
 def download_compiler(constants, settings):
     archive = os.path.join(settings["installdir"], "mingw-win64.zip")
     utils.download_file(settings["mingw_win64"], archive, 140409321)
-    utils.extract(archive,settings["installdir"])
+    utils.extract(archive, settings["installdir"])
+
 
 def download_libs(constants, settings):
     archive = os.path.join(settings["installdir"], "libraries.zip")
@@ -62,6 +67,7 @@ def download_libs(constants, settings):
     dlldir = os.path.join(settings["installdir"], "dev64", "bin")
     for lib in os.listdir(dlldir):
         shutil.copyfile(os.path.join(dlldir, lib), os.path.join(settings["installdir"], lib))
+
 
 def create_buildscript(constants, settings):
     build_script = r"""
@@ -78,8 +84,10 @@ MOVE .\bin\win64\EndlessSky.exe .\EndlessSky.exe
     with open(os.path.join(settings["installdir"], "build.bat"), "w") as bat:
         bat.write(build_script)
 
+
 def offer_compilation(constants, settings):
     p = sg.PopupYesNo("Do you want me to compile now? (You will have to do it eventually)")
     if p == "No":
         return
-    subprocess.run("start \"Compiling...\" \"%s\" & exit" % os.path.join(settings["installdir"], "build.bat"), shell=True)
+    subprocess.run("start \"Compiling...\" \"%s\" & exit" % os.path.join(settings["installdir"], "build.bat"),
+                   shell=True)
