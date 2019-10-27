@@ -12,21 +12,39 @@ import requests
 log = logging.getLogger("utils.py")
 
 
+def install_git(dir, constants):
+    log.info("Downloading Git")
+    os.makedirs(dir, exist_ok=True)
+    archive = os.path.join(dir, "git" + os.path.splitext(constants.win64_git)[1])
+    download_file(constants.win64_git, archive, None)
+    git_dir = os.path.join(dir, "git")
+    extract(archive, git_dir)
+    return git_dir
+
+
 def clone(repo_url, dir, git_bin):
     log.info("Cloning %s to %s" % (repo_url, dir))
     git_bin = git_bin or r"C:\Users\Florian\Downloads\mingit-busybox\cmd\git"
-
-    def update(op_code, cur_count, max_count=None, message=""):
-        log.info("Cloning, op_code: %s, current: %s, max: %s, message: %s" % (op_code, cur_count, max_count, message))
-        sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
+    temp_dir = os.path.join(dir, "temp")
 
     os.putenv("GIT_PYTHON_GIT_EXECUTABLE", git_bin)
     g = git.Git(dir)
     log.info(g.GIT_PYTHON_GIT_EXECUTABLE)
     log.info(str(g.version_info))
     log.info(str(g.environment()))
-    repo = git.Repo.clone_from(repo_url, dir, env={"GIT_PYTHON_GIT_EXECUTABLE": git_bin}, progress=update)
-    return repo
+
+    def update(op_code, cur_count, max_count=None, message=""):
+        log.info("Cloning, op_code: %s, current: %s, max: %s, message: %s" % (op_code, cur_count, max_count, message))
+        sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
+
+    repo = git.Repo.clone_from(repo_url, temp_dir, env={"GIT_PYTHON_GIT_EXECUTABLE": git_bin}, progress=update)
+    repo.close()
+
+    for f in os.listdir(temp_dir):
+        shutil.move(os.path.join(temp_dir, f), dir)
+    os.rmdir(temp_dir)
+
+    return git.Repo(dir)
 
 
 def download_file(url, path, size_estimate):
@@ -37,10 +55,12 @@ def download_file(url, path, size_estimate):
     if size_estimated:
         size = size_estimate
     name = os.path.basename(path)
+
+    chunk_size = 1024 * 512
     with open(path, "wb") as handle:
         done = 0
-        for data in r.iter_content(1024):
-            done += 1024
+        for data in r.iter_content(chunk_size):
+            done += chunk_size
             sg.OneLineProgressMeter("Downloading %s" % name, done, size, "downloadmeter",
                                     "Note: Total size is an estimate." if size_estimated else "", orientation="h")
             handle.write(data)

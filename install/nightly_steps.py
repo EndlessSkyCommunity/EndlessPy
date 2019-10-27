@@ -69,6 +69,7 @@ def setup_workspace(constants, settings):
 
 def download_resources(constants, settings):
     if settings["git"]:
+        git_dir = utils.install_git(settings["resourcedir"], constants)
         utils.clone(settings["es_git"], settings["resourcedir"], None)
     else:
         archive = os.path.join(settings["resourcedir"], "master.zip")

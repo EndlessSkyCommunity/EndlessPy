@@ -14,10 +14,6 @@ def prepare(constants):
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
         [sg.Text("Number of CPU cores to be used for compiling"),
          sg.Spin([i + 1 for i in range(0, cpu_count())], initial_value=cpu_count(), key="cpu_cores")],
-        [sg.Text("Advanced Options - Only use if you know what you're doing")],
-        [sg.Text("Git Repository"), sg.InputText(constants.es_git, key="es_git")],
-        [sg.Text("MinGW-w64 Download"), sg.InputText(constants.mingw_win64, key="mingw_win64")],
-        [sg.Text("Windows Development Libraries"), sg.InputText(constants.win64_dev_libs, key="win64_dev_libs")],
         [sg.Ok(), sg.Cancel()]
     ]
     window = sg.Window("Install Nightly").Layout(layout)
@@ -50,18 +46,18 @@ def prepare(constants):
 
 
 def cloning(constants, settings):
-    utils.clone(settings["es_git"], settings["installdir"], None)
+    utils.clone(constants.es_git, settings["installdir"], None)
 
 
 def download_compiler(constants, settings):
     archive = os.path.join(settings["installdir"], "mingw-win64.zip")
-    utils.download_file(settings["mingw_win64"], archive, 140409321)
+    utils.download_file(constants.mingw_win64, archive, 140409321)
     utils.extract(archive, settings["installdir"])
 
 
 def download_libs(constants, settings):
     archive = os.path.join(settings["installdir"], "libraries.zip")
-    utils.download_file(settings["win64_dev_libs"], archive, 2492854)
+    utils.download_file(constants.win64_dev_libs, archive, 2492854)
     utils.extract(archive, settings["installdir"])
 
     dlldir = os.path.join(settings["installdir"], "dev64", "bin")
