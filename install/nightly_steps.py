@@ -14,12 +14,6 @@ def prepare(constants):
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
         [sg.Text("Using Git is recommended, but it may slow down the installation process.")],
         [sg.Checkbox("Use Git", default=True, key="git")],
-        [sg.Text("Advanced Options - Only use if you know what you're doing")],
-        [sg.Text("Git Repository"), sg.InputText(constants.es_git, key="es_git")],
-        [sg.Text("Endless Sky archive"), sg.InputText(constants.es_master_zip, key="es_master_zip")],
-        [sg.Text("Windows Runtime Libraries"), sg.InputText(constants.win64_libs, key="win64_libs")],
-        [sg.Text("Windows Nightly Download"), sg.InputText(constants.nightly_win64, key="nightly_win64")],
-        [sg.Text("OSX Nightly Download Page"), sg.InputText(constants.nightly_osx_page, key="nightly_osx_page")],
         [sg.Ok(), sg.Cancel()]
     ]
     window = sg.Window("Install Nightly").Layout(layout)
@@ -70,10 +64,10 @@ def setup_workspace(constants, settings):
 def download_resources(constants, settings):
     if settings["git"]:
         git_dir = utils.install_git(settings["resourcedir"], constants)
-        utils.clone(settings["es_git"], settings["resourcedir"], None)
+        utils.clone(constants.es_git, settings["resourcedir"], None)
     else:
         archive = os.path.join(settings["resourcedir"], "master.zip")
-        utils.download_file(settings["es_master_zip"], archive, 89800000)
+        utils.download_file(constants.es_master_zip, archive, 89800000)
 
         utils.extract(archive, settings["resourcedir"])
 
@@ -85,7 +79,7 @@ def download_resources(constants, settings):
 
 def download_libraries(constants, settings):
     archive = os.path.join(settings["libdir"], "libraries.zip")
-    liburl = settings["win64_libs"] if constants.os == "win64" else settings["osx_libs"]
+    liburl = constants.win64_libs if constants.os == "win64" else constants.osx_libs
     utils.download_file(liburl, archive, 0)
     utils.extract(archive, settings["libdir"])
 
@@ -93,18 +87,18 @@ def download_libraries(constants, settings):
 def download_nightly(constants, settings):
     executable = os.path.join(settings["bindir"], "EndlessSky" + (".exe" if constants.os == "win64" else ""))
     if constants.os == "win64":
-        nightly_url = settings["nightly_win64"]
+        nightly_url = constants.nightly_win64
         target = executable
     else:
         print("Fetching download URL")
-        j = requests.get(settings["nightly_osx_page"]).json()
+        j = requests.get(constants.nightly_osx_page).json()
         nightly_url = j["assets"][0]["browser_download_url"]
         target = executable + ".zip"
     print("Downloading Nightly")
     utils.download_file(nightly_url, target, 0)
 
     if os == "osx" or True:
-        # util.extract(target, bindir)
+        utils.extract(target, settings["bindir"])
         st = os.stat(executable)
         os.chmod(executable, st.st_mode | stat.S_IEXEC)
         script = os.path.join(settings["installdir"], "EndlessSky.sh")
