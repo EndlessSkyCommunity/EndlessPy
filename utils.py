@@ -28,10 +28,6 @@ def clone(repo_url, dir, git_dir):
     temp_dir = os.path.join(dir, "temp")
 
     sys.path += [git_dir]
-    g = git.Git(dir)
-    log.info(g.GIT_PYTHON_GIT_EXECUTABLE)
-    log.info(str(g.version_info))
-    log.info(str(g.environment()))
 
     def update(op_code, cur_count, max_count=None, message=""):
         sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")

@@ -97,7 +97,7 @@ def download_nightly(constants, settings):
     print("Downloading Nightly")
     utils.download_file(nightly_url, target, 0)
 
-    if os == "osx" or True:
+    if os == "osx":
         utils.extract(target, settings["bindir"])
         st = os.stat(executable)
         os.chmod(executable, st.st_mode | stat.S_IEXEC)
