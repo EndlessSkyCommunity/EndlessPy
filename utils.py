@@ -22,22 +22,21 @@ def install_git(dir, constants):
     return git_dir
 
 
-def clone(repo_url, dir, git_bin):
+def clone(repo_url, dir, git_dir):
     log.info("Cloning %s to %s" % (repo_url, dir))
-    git_bin = git_bin or r"C:\Users\Florian\Downloads\mingit-busybox\cmd\git"
+    git_dir = git_dir or r"C:\Users\Florian\Downloads\mingit-busybox\cmd"
     temp_dir = os.path.join(dir, "temp")
 
-    os.putenv("GIT_PYTHON_GIT_EXECUTABLE", git_bin)
+    sys.path += [git_dir]
     g = git.Git(dir)
     log.info(g.GIT_PYTHON_GIT_EXECUTABLE)
     log.info(str(g.version_info))
     log.info(str(g.environment()))
 
     def update(op_code, cur_count, max_count=None, message=""):
-        log.info("Cloning, op_code: %s, current: %s, max: %s, message: %s" % (op_code, cur_count, max_count, message))
         sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
 
-    repo = git.Repo.clone_from(repo_url, temp_dir, env={"GIT_PYTHON_GIT_EXECUTABLE": git_bin}, progress=update)
+    repo = git.Repo.clone_from(repo_url, temp_dir, progress=update)
     repo.close()
 
     for f in os.listdir(temp_dir):
