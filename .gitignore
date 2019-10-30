@@ -4,3 +4,7 @@ dist/
 venv/
 .idea/
 __pycache__/
+install/
+*.dist/
+*.build/
+*.spec
