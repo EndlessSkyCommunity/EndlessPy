@@ -4,6 +4,7 @@ from threading import Thread
 import PySimpleGUI as sg
 
 import utils
+from constants import Constants
 from install import nightly_steps, compile_steps_win
 
 # TODO make dynamic
@@ -11,12 +12,12 @@ log = logging.getLogger("install.py")
 
 
 class InstallStep:
-    def __init__(self, description, desc_key, execute_func):
+    def __init__(self, description: str, desc_key, execute_func):
         self.execute = execute_func
         self.description = description
         self.desc_key = desc_key
 
-    def run(self, constants, settings, window: sg.Window):
+    def run(self, constants: Constants, settings: {}, window: sg.Window):
         thread = Thread(target=self.execute, args=(constants, settings))
         thread.start()
         while thread.is_alive():
@@ -25,11 +26,11 @@ class InstallStep:
 
 
 class Installer:
-    def __init__(self, steps: [InstallStep], finalize_func=None):
+    def __init__(self, steps: [InstallStep], finalize_func: callable = None):
         self.steps = steps
         self.finalize = finalize_func
 
-    def run(self, constants, settings):
+    def run(self, constants: Constants, settings: {}):
         label = sg.Text("")
         progress_bar = sg.ProgressBar(len(self.steps), "h")
         layout = [
@@ -56,7 +57,7 @@ class Installer:
             self.finalize(constants, settings)
 
 
-def install_nightly(constants):
+def install_nightly(constants: Constants):
     settings = nightly_steps.prepare(constants)
     if not settings:  # Aborted
         return
@@ -70,7 +71,7 @@ def install_nightly(constants):
     Installer(steps).run(constants, settings)
 
 
-def compile_win(constants):
+def compile_win(constants: Constants):
     settings = compile_steps_win.prepare(constants)
     if not settings:  # Aborted
         return

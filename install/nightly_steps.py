@@ -6,9 +6,10 @@ import PySimpleGUI as sg
 import requests
 
 import utils
+from constants import Constants
 
 
-def prepare(constants):
+def prepare(constants: Constants):
     layout = [
         [sg.Text("Select Install Directory")],
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
@@ -47,7 +48,7 @@ def prepare(constants):
                 return values
 
 
-def setup_workspace(constants, settings):
+def setup_workspace(constants: Constants, settings: {}):
     if constants.os == "osx":
         settings["resourcedir"] = os.path.join(settings["installdir"], "Resources")
         settings["libdir"] = os.path.join(settings["installdir"], "Frameworks")
@@ -61,7 +62,7 @@ def setup_workspace(constants, settings):
         settings["bindir"] = settings["installdir"]
 
 
-def download_resources(constants, settings):
+def download_resources(constants: Constants, settings: {}):
     if settings["git"]:
         git_dir = utils.install_git(settings["resourcedir"], constants)
         utils.clone(constants.es_git, settings["resourcedir"], None)
@@ -77,14 +78,14 @@ def download_resources(constants, settings):
         shutil.rmtree(os.path.join(temppath))
 
 
-def download_libraries(constants, settings):
+def download_libraries(constants: Constants, settings: {}):
     archive = os.path.join(settings["libdir"], "libraries.zip")
     liburl = constants.win64_libs if constants.os == "win64" else constants.osx_libs
     utils.download_file(liburl, archive, 0)
     utils.extract(archive, settings["libdir"])
 
 
-def download_nightly(constants, settings):
+def download_nightly(constants: Constants, settings: {}):
     executable = os.path.join(settings["bindir"], "EndlessSky" + (".exe" if constants.os == "win64" else ""))
     if constants.os == "win64":
         nightly_url = constants.nightly_win64

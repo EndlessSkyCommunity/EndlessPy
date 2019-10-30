@@ -6,9 +6,10 @@ from multiprocessing import cpu_count
 import PySimpleGUI as sg
 
 import utils
+from constants import Constants
 
 
-def prepare(constants):
+def prepare(constants: Constants):
     layout = [
         [sg.Text("Select Install Directory")],
         [sg.Input(key="installdir"), sg.FolderBrowse("Browse")],
@@ -45,17 +46,17 @@ def prepare(constants):
                 return values
 
 
-def cloning(constants, settings):
+def cloning(constants: Constants, settings: {}):
     utils.clone(constants.es_git, settings["installdir"], None)
 
 
-def download_compiler(constants, settings):
+def download_compiler(constants: Constants, settings: {}):
     archive = os.path.join(settings["installdir"], "mingw-win64.zip")
     utils.download_file(constants.mingw_win64, archive, 140409321)
     utils.extract(archive, settings["installdir"])
 
 
-def download_libs(constants, settings):
+def download_libs(constants: Constants, settings: {}):
     archive = os.path.join(settings["installdir"], "libraries.zip")
     utils.download_file(constants.win64_dev_libs, archive, 2492854)
     utils.extract(archive, settings["installdir"])
@@ -65,7 +66,7 @@ def download_libs(constants, settings):
         shutil.copyfile(os.path.join(dlldir, lib), os.path.join(settings["installdir"], lib))
 
 
-def create_buildscript(constants, settings):
+def create_buildscript(constants: Constants, settings: {}):
     build_script = r"""
 cd /D %%~dp0     &:: Switch to the script's directory, to not mess up relative paths
 set CXX=.\mingw64\bin\g++.exe
@@ -81,7 +82,7 @@ MOVE .\bin\win64\EndlessSky.exe .\EndlessSky.exe
         bat.write(build_script)
 
 
-def offer_compilation(constants, settings):
+def offer_compilation(constants: Constants, settings: {}):
     p = sg.PopupYesNo("Do you want me to compile now? (You will have to do it eventually)")
     if p == "No":
         return
