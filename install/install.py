@@ -10,18 +10,42 @@ from install import nightly_steps, compile_steps_win
 log = logging.getLogger("install.py")
 
 
+class InstallStep:
+    def __init__(self, description, desc_key, execute_func):
+        self.execute = execute_func
+        self.description = description
+        self.desc_key = desc_key
+
+    def run(self, constants, settings, window: sg.Window):
+        thread = Thread(target=self.execute, args=(constants, settings))
+        thread.start()
+        while thread.is_alive():
+            window.read(1)
+        thread.join()
+
+
 class Installer:
-    def __init__(self, steps, finalize_func=None):
+    def __init__(self, steps: [InstallStep], finalize_func=None):
         self.steps = steps
         self.finalize = finalize_func
 
     def run(self, constants, settings):
-        layout = [[sg.Text(step.description, key=step.desc_key)] for step in self.steps]
+        label = sg.Text("")
+        progress_bar = sg.ProgressBar(len(self.steps), "h")
+        layout = [
+            [label],
+            [progress_bar]
+        ]
         window = sg.Window("Installing").Layout(layout)
         window.Read(timeout=0)
 
         try:
-            [step.run(constants, settings, window) for step in self.steps]
+            i = 0
+            for step in self.steps:
+                progress_bar.update_bar(i)
+                label.update(value=step.description)
+                step.run(constants, settings, window)
+                i += 1
         except Exception as e:
             utils.exception_popup(e)
             window.Close()
@@ -30,26 +54,6 @@ class Installer:
         window.Close()
         if self.finalize:
             self.finalize(constants, settings)
-
-
-class InstallStep:
-    def __init__(self, description, desc_key, execute_func):
-        self.execute = execute_func
-        self.description = description
-        self.desc_key = desc_key
-
-    def run(self, constants, settings, window: sg.Window):
-        window.FindElement(self.desc_key).Update(value=u"\u27F3" + " " + self.description)
-        thread = Thread(target=self.execute, args=(constants, settings))
-        thread.start()
-        while thread.is_alive():
-            window.read(1)
-        thread.join()
-
-        self._finalize(window)
-
-    def _finalize(self, window):
-        window.FindElement(self.desc_key).Update(value=u"\u2713" + " " + self.description)
 
 
 def install_nightly(constants):
