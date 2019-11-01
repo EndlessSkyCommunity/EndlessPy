@@ -3,16 +3,24 @@ image: Visual Studio 2015
 build_script:
   - cmd: >-
       set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;C:\Python37-x64;C:\Program Files (x86)\NSIS;%PATH%
+
       set CC=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\gcc.exe
 
+
       python -m pip install -r requirements.txt
+
       python -m pip install nuitka
+
 
       python -m nuitka --show-scons --show-progress --mingw64 --standalone --plugin-enable=tk-inter --windows-disable-console --assume-yes-for-downloads EndlessPy.py
 
+
       curl https://raw.githubusercontent.com/Nuitka/NUITKA-Utilities/master/onefile-maker-windows.py -O
+
       REM uninstall PSG so this^ script runs in CLI mode
+
       python -m pip uninstall -y PySimpleGUI
+
       python onefile-maker-windows.py --dist=%CD%/EndlessPy.dist
 artifacts:
   - path: EndlessPy.exe
