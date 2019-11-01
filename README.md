@@ -3,6 +3,7 @@ EndlessPy
 
 Known Issues:
 - The Progress Meter is a bit laggy
+- The main progress window only shows the first letter of the current step's description
 - There is no "finished" dialog
 - The main selection window pops up again after an installation
 - Everything is placed in the main ES folder
