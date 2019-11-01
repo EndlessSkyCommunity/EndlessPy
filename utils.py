@@ -6,7 +6,6 @@ import traceback
 from zipfile import ZipFile
 
 import PySimpleGUI as sg
-import git
 import requests
 
 from constants import Constants
@@ -34,6 +33,7 @@ def clone(repo_url: str, dir: str, git_dir: str):
     def update(op_code, cur_count, max_count=None, message=""):
         sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
 
+    import git
     repo = git.Repo.clone_from(repo_url, temp_dir, progress=update)
     repo.close()
 
