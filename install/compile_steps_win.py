@@ -47,7 +47,7 @@ def prepare(constants: Constants):
 
 
 def cloning(constants: Constants, settings: {}, progress: sg.ProgressBar):
-    git_dir = utils.install_git(settings["resourcedir"], constants)
+    git_dir = utils.install_git(settings["installdir"], constants)
     utils.clone(constants.es_git, settings["installdir"], git_dir)
 
 
