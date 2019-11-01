@@ -31,7 +31,7 @@ class Installer:
         self.finalize = finalize_func
 
     def run(self, constants: Constants, settings: {}):
-        label = sg.Text("")
+        label = sg.Text("", auto_size_text=True)
         progress_bar = sg.ProgressBar(len(self.steps), "h")
         layout = [
             [label],
@@ -44,7 +44,7 @@ class Installer:
             i = 0
             for step in self.steps:
                 progress_bar.update_bar(i)
-                label.update(value=step.description)
+                label.update(value="%s (Step %s/%s)" % (step.description, i, len(self.steps)))
                 step.run(constants, settings, window)
                 i += 1
         except Exception as e:
