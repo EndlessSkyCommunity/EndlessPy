@@ -48,7 +48,7 @@ def prepare(constants: Constants):
                 return values
 
 
-def setup_workspace(constants: Constants, settings: {}):
+def setup_workspace(constants: Constants, settings: {}, progress: sg.ProgressBar):
     if constants.os == "osx":
         settings["resourcedir"] = os.path.join(settings["installdir"], "Resources")
         settings["libdir"] = os.path.join(settings["installdir"], "Frameworks")
@@ -62,10 +62,10 @@ def setup_workspace(constants: Constants, settings: {}):
         settings["bindir"] = settings["installdir"]
 
 
-def download_resources(constants: Constants, settings: {}):
+def download_resources(constants: Constants, settings: {}, progress: sg.ProgressBar):
     if settings["git"]:
         git_dir = utils.install_git(settings["resourcedir"], constants)
-        utils.clone(constants.es_git, settings["resourcedir"], None)
+        utils.clone(constants.es_git, settings["resourcedir"], git_dir)
     else:
         archive = os.path.join(settings["resourcedir"], "master.zip")
         utils.download_file(constants.es_master_zip, archive, 89800000)
@@ -78,14 +78,14 @@ def download_resources(constants: Constants, settings: {}):
         shutil.rmtree(os.path.join(temppath))
 
 
-def download_libraries(constants: Constants, settings: {}):
+def download_libraries(constants: Constants, settings: {}, progress: sg.ProgressBar):
     archive = os.path.join(settings["libdir"], "libraries.zip")
     liburl = constants.win64_libs if constants.os == "win64" else constants.osx_libs
     utils.download_file(liburl, archive, 0)
     utils.extract(archive, settings["libdir"])
 
 
-def download_nightly(constants: Constants, settings: {}):
+def download_nightly(constants: Constants, settings: {}, progress: sg.ProgressBar):
     executable = os.path.join(settings["bindir"], "EndlessSky" + (".exe" if constants.os == "win64" else ""))
     if constants.os == "win64":
         nightly_url = constants.nightly_win64

@@ -46,17 +46,18 @@ def prepare(constants: Constants):
                 return values
 
 
-def cloning(constants: Constants, settings: {}):
-    utils.clone(constants.es_git, settings["installdir"], None)
+def cloning(constants: Constants, settings: {}, progress: sg.ProgressBar):
+    git_dir = utils.install_git(settings["resourcedir"], constants)
+    utils.clone(constants.es_git, settings["installdir"], git_dir)
 
 
-def download_compiler(constants: Constants, settings: {}):
+def download_compiler(constants: Constants, settings: {}, progress: sg.ProgressBar):
     archive = os.path.join(settings["installdir"], "mingw-win64.zip")
     utils.download_file(constants.mingw_win64, archive, 140409321)
     utils.extract(archive, settings["installdir"])
 
 
-def download_libs(constants: Constants, settings: {}):
+def download_libs(constants: Constants, settings: {}, progress: sg.ProgressBar):
     archive = os.path.join(settings["installdir"], "libraries.zip")
     utils.download_file(constants.win64_dev_libs, archive, 2492854)
     utils.extract(archive, settings["installdir"])
@@ -66,7 +67,7 @@ def download_libs(constants: Constants, settings: {}):
         shutil.copyfile(os.path.join(dlldir, lib), os.path.join(settings["installdir"], lib))
 
 
-def create_buildscript(constants: Constants, settings: {}):
+def create_buildscript(constants: Constants, settings: {}, progress: sg.ProgressBar):
     build_script = r"""
 cd /D %%~dp0     &:: Switch to the script's directory, to not mess up relative paths
 set CXX=.\mingw64\bin\g++.exe
@@ -82,7 +83,7 @@ MOVE .\bin\win64\EndlessSky.exe .\EndlessSky.exe
         bat.write(build_script)
 
 
-def offer_compilation(constants: Constants, settings: {}):
+def offer_compilation(constants: Constants, settings: {}, progress: sg.ProgressBar):
     p = sg.PopupYesNo("Do you want me to compile now? (You will have to do it eventually)")
     if p == "No":
         return

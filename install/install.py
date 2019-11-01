@@ -17,8 +17,8 @@ class InstallStep:
         self.description = description
         self.desc_key = desc_key
 
-    def run(self, constants: Constants, settings: {}, window: sg.Window):
-        thread = Thread(target=self.execute, args=(constants, settings))
+    def run(self, constants: Constants, settings: {}, window: sg.Window, progress: sg.ProgressBar):
+        thread = Thread(target=self.execute, args=(constants, settings, progress))
         thread.start()
         while thread.is_alive():
             window.read(1)
@@ -32,10 +32,12 @@ class Installer:
 
     def run(self, constants: Constants, settings: {}):
         label = sg.Text("", auto_size_text=True)
-        progress_bar = sg.ProgressBar(len(self.steps), "h")
+        total_progress_bar = sg.ProgressBar(len(self.steps), "h")
+        step_progress_bar = sg.ProgressBar(len(self.steps), "h")
         layout = [
             [label],
-            [progress_bar]
+            [total_progress_bar],
+            [step_progress_bar]
         ]
         window = sg.Window("Installing").Layout(layout)
         window.Read(timeout=0)
@@ -43,10 +45,16 @@ class Installer:
         try:
             i = 0
             for step in self.steps:
-                progress_bar.update_bar(i)
                 label.update(value="%s (Step %s/%s)" % (step.description, i, len(self.steps)))
-                step.run(constants, settings, window)
+
+                total_progress_bar.update_bar(i)
+                step_progress_bar.update_bar(0, 1)
+
+                step.run(constants, settings, window, step_progress_bar)
+
+                step_progress_bar.update_bar(1, 1)
                 i += 1
+
         except Exception as e:
             utils.exception_popup(e)
             window.Close()

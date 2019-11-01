@@ -20,20 +20,20 @@ def install_git(dir: str, constants: Constants):
     download_file(constants.win64_git, archive, None)
     git_dir = os.path.join(dir, "git")
     extract(archive, git_dir)
-    return git_dir
+    return os.path.join(git_dir, "cmd")
 
 
 def clone(repo_url: str, dir: str, git_dir: str):
     log.info("Cloning %s to %s" % (repo_url, dir))
-    git_dir = git_dir or r"C:\Users\Florian\Downloads\mingit-busybox\cmd"
-    temp_dir = os.path.join(dir, "temp")
-
-    sys.path += [git_dir]
 
     def update(op_code, cur_count, max_count=None, message=""):
         sg.OneLineProgressMeter("Cloning", cur_count, max_count, "clonemeter", message, orientation="h")
 
+    # Black Magic to make GitPython use the right git executable, see https://stackoverflow.com/questions/58581468/
+    os.environ["PATH"] = os.pathsep.join([git_dir]) + os.pathsep + os.environ["PATH"]
     import git
+
+    temp_dir = os.path.join(dir, "temp")
     repo = git.Repo.clone_from(repo_url, temp_dir, progress=update)
     repo.close()
 
@@ -44,7 +44,7 @@ def clone(repo_url: str, dir: str, git_dir: str):
     return git.Repo(dir)
 
 
-def download_file(url: str, path: str, size_estimate: int):
+def download_file(url: str, path: str, size_estimate: int = None):
     log.info("Downloading file %s to %s" % (url, path))
     r = requests.get(url, stream=True)
     size = int(r.headers.get('content-length', 0))
