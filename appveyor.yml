@@ -16,7 +16,9 @@ build_script:
       python -m pip install nuitka
 
 
-      python -m nuitka --show-scons --show-progress --mingw64 --standalone --plugin-enable=tk-inter --windows-disable-console --assume-yes-for-downloads EndlessPy.py
+      python -m nuitka --show-scons --show-progress --mingw64 --standalone --plugin-enable=tk-inter --windows-disable-console --assume-yes-for-downloads --output-dir=EndlessPy-win64 EndlessPy.py
+
+      7z a -tzip -mx9 -y EndlessPy.zip .\EndlessPy-win64\
 
 
       curl https://raw.githubusercontent.com/Nuitka/NUITKA-Utilities/master/onefile-maker-windows.py -O
@@ -27,10 +29,6 @@ build_script:
 
       python onefile-maker-windows.py --dist=%CD%/EndlessPy.dist
 
-
-      mv EndlessPy.dist EndlessPy
-
-      7z a -tzip -mx9 -y EndlessPy.zip .\EndlessPy\
 artifacts:
   - path: EndlessPy.exe
     name: EndlessPy-win64.exe
