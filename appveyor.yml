@@ -1,5 +1,9 @@
 version: 1.0.{build}
+
 image: Visual Studio 2015
+
+skip_non_tags: true
+
 build_script:
   - cmd: >-
       set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;C:\Python37-x64;C:\Program Files (x86)\NSIS;%PATH%
@@ -22,6 +26,12 @@ build_script:
       python -m pip uninstall -y PySimpleGUI
 
       python onefile-maker-windows.py --dist=%CD%/EndlessPy.dist
+
 artifacts:
   - path: EndlessPy.exe
     name: EndlessPy-win64.exe
+
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: PPdma3vGLFxuYsZv25IoaZx5pBOC8DUQPbCMZf/ZOR0RtMSwtjUGIW5RU1fSmDyC
