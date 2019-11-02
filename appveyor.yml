@@ -27,7 +27,7 @@ build_script:
 
       python -m pip uninstall -y PySimpleGUI
 
-      python onefile-maker-windows.py --dist=%CD%/EndlessPy.dist
+      python onefile-maker-windows.py --dist=%CD%/EndlessPy-win64
 
 artifacts:
   - path: EndlessPy.exe
