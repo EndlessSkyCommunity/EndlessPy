@@ -27,9 +27,15 @@ build_script:
 
       python onefile-maker-windows.py --dist=%CD%/EndlessPy.dist
 
+
+      mv EndlessPy.dist EndlessPy
+
+      7z a -tzip -mx9 -y EndlessPy.zip .\EndlessPy\
 artifacts:
   - path: EndlessPy.exe
     name: EndlessPy-win64.exe
+  - path: EndlessPy.zip
+    name: EndlessPy-win64.zip
 
 deploy:
   - provider: GitHub
