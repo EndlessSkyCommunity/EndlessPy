@@ -5,7 +5,7 @@ import PySimpleGUI as sg
 
 import utils
 from constants import Constants
-from install import nightly_steps, compile_steps_win
+from install import nightly_steps_win, compile_steps_win
 
 # TODO make dynamic
 log = logging.getLogger("install.py")
@@ -66,15 +66,14 @@ class Installer:
 
 
 def install_nightly(constants: Constants):
-    settings = nightly_steps.prepare(constants)
+    settings = nightly_steps_win.prepare(constants)
     if not settings:  # Aborted
         return
     settings["type"] = "nightly-%s-%s" % (constants.os, "git" if settings["git"] else "nogit")
     steps = [
-        InstallStep("Setting up workspace", "1", nightly_steps.setup_workspace),
-        InstallStep("Cloning" if settings["git"] else "Downloading Master", "2", nightly_steps.download_resources),
-        InstallStep("Downloading required libraries", "3", nightly_steps.download_libraries),
-        InstallStep("Downloading Nightly", "4", nightly_steps.download_nightly)
+        InstallStep("Cloning" if settings["git"] else "Downloading Master", "1", nightly_steps_win.download_resources),
+        InstallStep("Downloading required libraries", "2", nightly_steps_win.download_libraries),
+        InstallStep("Downloading Nightly", "3", nightly_steps_win.download_nightly)
     ]
     Installer(steps).run(constants, settings)
 
@@ -83,7 +82,6 @@ def compile_win(constants: Constants):
     settings = compile_steps_win.prepare(constants)
     if not settings:  # Aborted
         return
-    settings["type"] = "source-%s" % constants.os
     steps = [
         InstallStep("Cloning", "1", compile_steps_win.cloning),
         InstallStep("Downloading MinGW-w64", "2", compile_steps_win.download_compiler),
