@@ -16,7 +16,9 @@ build_script:
       python -m pip install nuitka
 
 
-      python -m nuitka --show-scons --show-progress --mingw64 --standalone --plugin-enable=tk-inter --windows-disable-console --assume-yes-for-downloads --output-dir=EndlessPy-win64 EndlessPy.py
+      python -m nuitka --show-scons --show-progress --mingw64 --standalone --plugin-enable=tk-inter --windows-disable-console --assume-yes-for-downloads EndlessPy.py
+
+      MOVE EndlessPy.dist EndlessPy-win64
 
       7z a -tzip -mx9 -y EndlessPy.zip .\EndlessPy-win64\
 
